@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1>Challenge Details - {{ challenge_name }}</h1>
+        <div class="row">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        {{ challenge_name }}
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Start Date: {{ challenge_details['start_date'] }}</p>
+                        <p class="card-text">Duration: {{ challenge_details['duration'] }} days</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">
+                            Progress:
+                        </div>
+                        <!-- Progress Bar -->
+                        <div class="progress">
+                            {% set completed_days = challenge_details['progress']|calculate_completed_days %}
+                            {% set progress_percent = (completed_days / challenge_details['duration']) * 100 %}
+                            {% set rounded_percent = progress_percent|round(2) %}
+                            <div class="progress-bar" role="progressbar" style="width: {{ rounded_percent }}%;" aria-valuenow="{{ rounded_percent }}" aria-valuemin="0" aria-valuemax="100">
+                                {{ rounded_percent }}%
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Calendar for Daily Progress -->
+                    <div id="calendar_{{ challenge_name }}"></div>
+                    <!-- JavaScript-Funktion für den Kalender -->
+                    <script>
+                        // Aufruf der Funktion mit den entsprechenden Daten
+                        document.addEventListener('DOMContentLoaded', function () {
+                            createChallengeCalendar(
+                                '{{ challenge_name }}',
+                                '{{ challenge_details['start_date'] }}',
+                                {{ challenge_details['duration'] }},
+                                {{ challenge_details['progress']|tojson }}
+                            );
+                        });
+                    </script>
+
+                    <ul class="list-group list-group-flush">
+                        {% for date, completed in challenge_details['progress'].items() %}
+                            <li class="list-group-item">
+                                <form method="POST" action="/update_daily_progress/{{ challenge_name }}/{{ date }}">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" onclick="this.form.submit()" name="completed" {% if completed %}checked{% endif %}>
+                                        <label class="form-check-label">{{ date }} {% if completed %}(Completed){% else %}(Not Completed){% endif %}</label>
+                                    </div>
+                                    <input type="submit" hidden="hidden" value="Update" class="btn btn-primary">
+                                </form>
+                            </li>
+                        {% endfor %}
+                    </ul>
+            <div class="card-body">
+               <form class="form-control" method="POST" action="/delete_challenge/{{ challenge_name }}">
+                <input type="submit" value="Delete Challenge" class="btn btn-danger">
+                </form>
+            </div>
+
+        </div>
+    </div>
+    </div>
+<script src="{{ url_for('static', filename='js/challenge_calendar.js') }}"></script>
+{% endblock %}

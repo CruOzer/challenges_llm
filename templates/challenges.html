@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1>{% if show_completed %}Completed Challenges{% else %}Active Challenges{% endif %}</h1>
+        <div class="row">
+            {% for challenge, details in challenges.items() %}
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            {{ challenge }}
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Start Date: {{ details['start_date'] }}</p>
+                            <p class="card-text">Duration: {{ details['duration'] }} days</p>
+                            <span class="badge {% if challenge_statuses[challenge] == 'Not Started' %}bg-warning{% elif challenge_statuses[challenge] == 'Done' %}bg-success{% else %}bg-primary{% endif %}">
+                                {{ challenge_statuses[challenge] }}
+                            </span>
+                        </div>
+                        <div class="card-footer">
+                            <a href="/challenge_details/{{ challenge }}" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1>Welcome to My Flask App</h1>
+
+        <h1>Start a Challenge</h1>
+        <form method="POST" action="/start_challenge">
+            <label class="form-label" for="challenge_name">Challenge Name:</label>
+            <input class="form-control" type="text" id="challenge_name" name="challenge_name" required pattern=".*\S+.*">
+            <small class="form-text text-muted">Challenge name is required and cannot consist of only spaces.</small>
+            <br>
+            <label class="form-label" for="start_date">Start Date:</label>
+            <input class="form-control" type="date" id="start_date" name="start_date" required>
+            <br>
+            <label class="form-label" for="duration">Select Challenge Duration (in days):</label>
+            <input class="form-control" type="number" id="duration" name="duration" min="1" required>
+            <small class="form-text text-muted">Duration must be at least 1 day.</small>
+            <br>
+            <input type="submit" value="Start Challenge" class="btn btn-primary">
+        </form>
+        <a href="/challenges" class="link-primary">View Challenges</a>
+    </div>
+{% endblock %}
